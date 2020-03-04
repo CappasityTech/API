@@ -65,8 +65,8 @@ Accepted attributes are:
 
 | Parameter           | Type    | Default | Description                                                                               |
 |---------------------|---------|---------|-------------------------------------------------------------------------------------------|
-| `width`             | string  | '100%'  | iFrame width, px or %                                                                     |
-| `height`            | string  | '600px' | iFrame height, px or %                                                                    |
+| `width`             | integer, >= 100  | 100    | iFrame width, px or %. Treated as `100%` when set at 100, otherwise in px                                                                     |
+| `height`            | integer, >= 100  | 600    | iFrame height, px or %. Treated as `100%` when set at 100, otherwise in px                                                                    |
 | `autorun`           | boolean | false   | Whether to start the player (widget) automatically or display the preview and play button |
 | `closebutton`       | boolean | true    | Show close button                                                                         |
 | `logo`              | boolean | true    | Show Cappasity logo                                                                       |
