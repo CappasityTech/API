@@ -1,6 +1,6 @@
 # Documentation for integrating with Cappasity 3D Platform
 
-(c) Copyright 2017-2019, Cappasity Inc. All rights reserved.
+(c) Copyright 2017-2020, Cappasity Inc. All rights reserved.
 
 ## Registering an account and getting an API key
 
@@ -148,7 +148,7 @@ curl -X GET --compressed \
 `https://api.cappasity.com/api/files/preview/<user-alias>/w640-h400-cpad-bffffff/<sku>.jpeg`
 `https://api.cappasity.com/api/files/preview/<user-alias>/<sku>.jpeg`
 
-To get a preview - form a link that consists of modifiers, your account alias (the value you provided as `nickname` on registration and appearing as `https://3d.cappasity.com/u/<ALIAS>` when you logged into your accout) and model `SKU` or `cappasity-id` (refer to [File.json#/properties/id](file.json))
+To get a preview - form a link that consists of modifiers, your account alias (the value you provided as `username` on registration and appearing as `https://3d.cappasity.com/u/<ALIAS>` when you logged into your account) and model `SKU` or `cappasity-id` (refer to [File.json#/properties/id](file.json))
 Supported modifiers:
 
 ```
