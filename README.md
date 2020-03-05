@@ -143,12 +143,12 @@ curl -X GET --compressed \
 
 ### Getting preview image for the model
 
-`https://api.cappasity.com/api/files/preview/tsum/w640-h400-cpad-bffffff/<cappasity-id>.jpeg`
-`https://api.cappasity.com/api/files/preview/tsum/<cappasity-id>.jpeg`
-`https://api.cappasity.com/api/files/preview/tsum/w640-h400-cpad-bffffff/<sku>.jpeg`
-`https://api.cappasity.com/api/files/preview/tsum/<sku>.jpeg`
+`https://api.cappasity.com/api/files/preview/<user-alias>/w640-h400-cpad-bffffff/<cappasity-id>.jpeg`
+`https://api.cappasity.com/api/files/preview/<user-alias>/<cappasity-id>.jpeg`
+`https://api.cappasity.com/api/files/preview/<user-alias>/w640-h400-cpad-bffffff/<sku>.jpeg`
+`https://api.cappasity.com/api/files/preview/<user-alias>/<sku>.jpeg`
 
-To get a preview - form a link that consists of modifiers and model `SKU` or `cappasity-id` (refer to [File.json#/properties/id](file.json))
+To get a preview - form a link that consists of modifiers, your account alias (the value you provided as `nickname` on registration and appearing as `https://3d.cappasity.com/u/<ALIAS>` when you logged into your accout) and model `SKU` or `cappasity-id` (refer to [File.json#/properties/id](file.json))
 Supported modifiers:
 
 ```
@@ -165,8 +165,8 @@ Supported modifiers:
   
 Example links:
   
-* 640x400, preserving aspect ratio and padding with white background (default): https://api.cappasity.com/api/files/preview/tsum/w640-h400-cpad/5100008597412.jpeg
-* original file that was uploaded: https://api.cappasity.com/api/files/preview/tsum/5100008597412.jpeg
+* 640x400, preserving aspect ratio and padding with white background (default): https://api.cappasity.com/api/files/preview/cappasity/w640-h400-cpad/d53e89b7-382a-4741-8ec9-e7ef7c2662b6.jpeg
+* original file that was uploaded: https://api.cappasity.com/api/files/preview/cappasity/d53e89b7-382a-4741-8ec9-e7ef7c2662b6.jpeg
 
 ## Interacting with the Player
 
