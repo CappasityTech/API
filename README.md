@@ -150,7 +150,7 @@ This endpoint provides extended information about model.
   https://api.cappasity.com/api/files/info/<user-alias>/<cappasity-id>
 ```
 
-`<user-alias>` is the value provided as `nickname` on registration and appearing as `https://3d.cappasity.com/u/<ALIAS>` when logged into your account. `sku` or `cappasity-id` strings must comply with the rules (refer to [File.json#/properties/id](file.json))
+`<user-alias>` is the value provided as `username` on registration and appearing as `https://3d.cappasity.com/u/<ALIAS>` when logged into your account. `sku` or `cappasity-id` strings must comply with the rules (refer to [File.json#/properties/id](file.json))
 
 Example request (for a model with SKU: "A B C"):
 
