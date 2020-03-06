@@ -141,6 +141,80 @@ curl -X GET --compressed \
   "https://api.cappasity.com/api/files?owner=cappasity&sortBy=uploadedAt&order=DESC&shallow=1&offset=0&limit=24&filter=%7B%22uploadedAt%22%3A%7B%22gte%22%3A1486694997327%2C%22lte%22%3A1487447115708%7D%7D"
 ```
 
+### Get information about specific model by SKU or Cappasity ID
+
+This endpoint provides extended information about model.
+
+```
+  https://api.cappasity.com/api/files/info/<user-alias>/<sku>
+  https://api.cappasity.com/api/files/info/<user-alias>/<cappasity-id>
+```
+
+`<user-alias>` is the value provided as `nickname` on registration and appearing as `https://3d.cappasity.com/u/<ALIAS>` when logged into your account. `sku` or `cappasity-id` strings must comply with the rules (refer to [File.json#/properties/id](file.json))
+
+Example request (for a model with SKU: "A B C"):
+
+```bash
+curl -X GET --compressed \
+  -H "Content-Type: application/vnd.api+json" \
+  "https://api.cappasity.com/api/files/info/cappasity/A%20B%20C"
+```
+
+Example response:
+
+```json5
+{
+  "meta": {
+    "id": "6adbc6d2-69b4-4c88-91a8-8f99f54b083d"
+  },
+  "data": {
+    "type": "file",
+    "id": "95f59308-3e2c-4151-a541-1db0aac3ad0d", /* model's cappasity id */
+    "attributes": {
+      "public": "1",
+      "contentLength": 19919914,
+      "name": "Prosecco",
+      "files": [/* internal file data */],
+      "parts": 5,
+      "tags": [
+        "drink",
+        "alcoholic beverage",
+        "liqueur",
+        "champagne",
+        "wine",
+        "distilled beverage",
+        "bottle",
+        "alcohol",
+        "sparkling wine",
+        "glass bottle"
+      ],
+      "type": "object",
+      "uploadedAt": 1579521161823,
+      "embed": {
+        "ai": "<script async src=\"https://api.cappasity.com/api/player/cappasity-ai\"></script>",
+        "code": "<iframe allowfullscreen mozallowfullscreen=\"true\" webkitallowfullscreen=\"true\" width=\"{{ width }}\" height=\"{{ height }}\" frameborder=\"0\" style=\"border:0;\" src=\"https://api.cappasity.com/api/player/95f59308-3e2c-4151-a541-1db0aac3ad0d/embedded?autorun={{ autorun }}&closebutton={{ closebutton }}&logo={{ logo }}&analytics={{ analytics }}&uipadx={{ uipadx }}&uipady={{ uipady }}&enablestoreurl={{ enablestoreurl }}&storeurl={{ storeurl }}&hidehints={{ hidehints }}&autorotate={{ autorotate }}&autorotatetime={{ autorotatetime }}&autorotatedelay={{ autorotatedelay }}&autorotatedir={{ autorotatedir }}&hidefullscreen={{ hidefullscreen }}&hideautorotateopt={{ hideautorotateopt }}&hidesettingsbtn={{ hidesettingsbtn }}&enableimagezoom={{ enableimagezoom }}&zoomquality={{ zoomquality }}&hidezoomopt={{ hidezoomopt }}\"></iframe>",
+        "params": {/* embedded parameters available for the model */}
+      },
+      "bucket": "cdn.cappasity.com",
+      "alias": "A B C",
+      "uploadType": "simple",
+      "backgroundColor": "#FFFFFF",
+      "packed": "1",
+      "c_ver": "4.1.0",
+      "owner": "cappasity"
+    },
+    "links": {
+      "self": "https://api.cappasity.com/api/files/95f59308-3e2c-4151-a541-1db0aac3ad0d",
+      "owner": "https://api.cappasity.com/api/users/cappasity",
+      "player": "https://3d.cappasity.com/u/cappasity/95f59308-3e2c-4151-a541-1db0aac3ad0d",
+      "user": "https://3d.cappasity.com/u/cappasity"
+    }
+  }
+}
+```
+
+For private models you may need `authorization` header too.
+
 ### Getting preview image for the model
 
 `https://api.cappasity.com/api/files/preview/<user-alias>/w640-h400-cpad-bffffff/<cappasity-id>.jpeg`
@@ -148,7 +222,8 @@ curl -X GET --compressed \
 `https://api.cappasity.com/api/files/preview/<user-alias>/w640-h400-cpad-bffffff/<sku>.jpeg`
 `https://api.cappasity.com/api/files/preview/<user-alias>/<sku>.jpeg`
 
-To get a preview - form a link that consists of modifiers, your account alias (the value you provided as `username` on registration and appearing as `https://3d.cappasity.com/u/<ALIAS>` when you logged into your account) and model `SKU` or `cappasity-id` (refer to [File.json#/properties/id](file.json))
+To get a preview - form a link that consists of modifiers, your user alias and model `sku` or `cappasity-id`.
+
 Supported modifiers:
 
 ```
