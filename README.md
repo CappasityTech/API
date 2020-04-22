@@ -86,6 +86,7 @@ Accepted attributes are:
 | `enablestoreurl`    | boolean | false   | Whether to enable link to the store page                                                  |
 | `storeurl`          | string  | ''      | Link to the store page                                                                    |
 | `hidehints`         | boolean | false   | Hide tutorial hints                                                                       |
+| `language`          | string  | ---     | The language used to display hints and messages, available languages are: `en`, `zh`, `ru`, `de`, `es`, `fr`, `nl` |
 
 Use iframe code and insert it into your HTML
 
