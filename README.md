@@ -2,6 +2,25 @@
 
 (c) Copyright 2017-2020, Cappasity Inc. All rights reserved.
 
+- [Registering an account and getting an API key](#registering-an-account-and-getting-an-api-key)
+- [Uploading 3D View or 3D models](#uploading-3d-view-or-3d-models)
+- [API methods](#api-methods)
+  - [Get embed code based on SKU](#get-embed-code-based-on-sku)
+  - [List uploaded files](#list-uploaded-files)
+  - [Get information about specific model by SKU or Cappasity ID](#get-information-about-specific-model-by-sku-or-cappasity-id)
+  - [Getting preview image for the model](#getting-preview-image-for-the-model)
+- [Interacting with the Player](#interacting-with-the-player)
+  - [Types of events](#types-of-events)
+    - [Frame Draw Notification](#frame-draw-notification)
+    - [Full Model Load](#full-model-load)
+- [Controlling Player behavior](#controlling-player-behavior)
+  - [Available methods](#available-methods)
+    - [`rotateToDeg`](#rotatetodeg)
+    - [`enterFullscreen`](#enterfullscreen)
+    - [`cancelFullscreen`](#cancelfullscreen)
+    - [`cancelZoom`](#cancelzoom)
+- [Send Analytics](#send-analytics)
+
 ## Registering an account and getting an API key
 
 1. Register using https://3d.cappasity.com/register link
@@ -349,3 +368,10 @@ If model in the player is zoomed this command will return it back to non-zoomed 
 ```js
   document.getElementById('player').contentWindow.postMessage({ fn: 'cancelZoom', args: [] }, 'https://api.cappasity.com')
 ```
+
+## Send Analytics
+Add the following script tag to the pages with Cappasity 3D Views:
+```
+<script async src=”https://api.cappasity.com/api/player/cappasity-ai” />
+```
+It will collect and send Cappasity 3D View analytics.
