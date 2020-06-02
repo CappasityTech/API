@@ -6,6 +6,8 @@
 - [Uploading 3D View or 3D models](#uploading-3d-view-or-3d-models)
 - [API methods](#api-methods)
   - [Get embed code based on SKU](#get-embed-code-based-on-sku)
+  - [Get embed code based on cappasity URL](#get-embed-code-based-on-cappasity-url)
+    - [Player customization options](#player-customization-options)
   - [List uploaded files](#list-uploaded-files)
   - [Get information about specific model by SKU or Cappasity ID](#get-information-about-specific-model-by-sku-or-cappasity-id)
   - [Getting preview image for the model](#getting-preview-image-for-the-model)
@@ -79,6 +81,47 @@ HTTP response will have statusCode `200` and contain the following JSON data str
 }
 ```
 
+### Get embed code based on cappasity URL
+
+If you have a cappasity 3d URL, such as `https://3d.cappasity.com/u/cappasity/2724daa5-cb68-43f9-8d5a-36be7e06f88d`, you may retrieve
+customized player URL. Quick example is provided below. Please look at [sample code](./marketplace.js) for a complete set of options
+
+```bash
+curl -X POST --compressed \
+  -H "Content-Type: application/vnd.api+json" \
+  -H "Authorization: Bearer hash.token.signature" \
+  "https://api.cappasity.com/api/oembed/marketplace?url=https%3A%2F%2F3d.cappasity.com%2Fu%2Fcappasity%2F2724daa5-cb68-43f9-8d5a-36be7e06f88d" \
+  -d '{
+    "data": {
+      "type": "oembed",
+      "attributes": {
+        "width": 100,
+        "height": 600
+      }
+    }
+  }'
+```
+
+HTTP response will have statusCode `200` and contain the following JSON data structure in the body:
+
+```json
+{
+  {
+    "meta": {
+      "id": "<request id>"
+    }
+    "data": {
+      "id": "<user id>/<model id>",
+      "type": "embed",
+      "attributes": {
+        "html": "<iframe ...></iframe>"
+      }
+    }
+  }
+}
+```
+
+#### Player customization options
 
 Accepted attributes are:
 

@@ -14,7 +14,7 @@ const authenticatedRequest = got.extend({
         'accept-version': '~1',
     },
     http2: true,
-    decompress: true,
+    decompress: true,   
 });
 
 const getIframeCode = async (url) => {
