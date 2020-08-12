@@ -148,6 +148,7 @@ Accepted attributes are:
 | `enablestoreurl`    | boolean | false   | Whether to enable link to the store page                                                  |
 | `storeurl`          | string  | ''      | Link to the store page                                                                    |
 | `hidehints`         | boolean | false   | Hide tutorial hints                                                                       |
+| `starthint`         | boolean | false   | Whether to skip 'rotate hint'                                                             |
 | `language`          | string  | ---     | The language used to display hints and messages, available languages are: `en`, `zh`, `ru`, `de`, `es`, `fr`, `nl` |
 | `arbutton`          | boolean | true    | Show AR button                                                                            |
 
