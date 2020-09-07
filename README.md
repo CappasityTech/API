@@ -4,7 +4,7 @@
 
 - [Registering an account and getting an API key](#registering-an-account-and-getting-an-api-key)
 - [Uploading 3D View or 3D models](#uploading-3d-view-or-3d-models)
-- [API methods](#api-methods)
+- [API methods and considerations](#api-methods-and-considerations)
   - [Get embed code based on SKU](#get-embed-code-based-on-sku)
   - [Get embed code based on cappasity URL](#get-embed-code-based-on-cappasity-url)
     - [Player customization options](#player-customization-options)
@@ -22,6 +22,7 @@
     - [`cancelFullscreen`](#cancelfullscreen)
     - [`cancelZoom`](#cancelzoom)
 - [Send Analytics](#send-analytics)
+- [Rate Limits](#rate-limits)
 
 ## Registering an account and getting an API key
 
@@ -35,9 +36,9 @@
 2. For ease of integration assign SKU to the models you are uploading - this is a user generated alias, which can be used to programmatically access existing models and generate embeddable iframe code on the go.
 3. If you do not assign SKUs right away - it can be done manually through our website interface via "edit model" feature.
 
-## API methods
+## API methods and considerations
 
-There are 2 ways to integrate with us - for testing & debugging you might use `embed button`, which will allow you to select different settings, size of the iframe and receive `iframe` code right away. However, when you are working with large amounts of models it might be most convenient to use API to generate iframe code. It won't change unless you change settings - so it's advised to cache it to reduce latency and amount of requests your server is performing.
+There are 2 ways to integrate with us - for testing & debugging you might use `embed button`, which will allow you to select different settings, size of the iframe and receive `iframe` code right away. However, when you are working with large amounts of models it might be most convenient to use API to generate iframe code. It won't change unless you change settings - so it's advised to cache it to reduce latency and amount of requests your server is performing. Consider [Cappasity API rate limits](#rate-limits).
 
 ### Get embed code based on SKU
 
@@ -81,7 +82,7 @@ HTTP response will have statusCode `200` and contain the following JSON data str
 }
 ```
 
-### Get embed code based on cappasity URL
+### Get embed code based on Cappasity URL
 
 If you have a cappasity 3d URL, such as `https://3d.cappasity.com/u/cappasity/2724daa5-cb68-43f9-8d5a-36be7e06f88d`, you may retrieve
 customized player URL. Quick example is provided below. Please look at [sample code](./marketplace.js) for a complete set of options
@@ -307,6 +308,35 @@ Example links:
   
 * 640x400, preserving aspect ratio and padding with white background (default): https://api.cappasity.com/api/files/preview/cappasity/w640-h400-cpad/d53e89b7-382a-4741-8ec9-e7ef7c2662b6.jpeg
 * original file that was uploaded: https://api.cappasity.com/api/files/preview/cappasity/d53e89b7-382a-4741-8ec9-e7ef7c2662b6.jpeg
+
+### Rate Limits
+
+#### By sync items to register
+Most likely, you are going to reach sync items rate limit.
+
+##### Per job
+* Maximum of 500 items
+
+To register a bigger collection, split your items into several jobs.
+
+##### Per all jobs for last 24 hours
+* The maximum total number of items in all jobs registered for last 24 hours depends on your account plan, 10000 items at least.
+
+Keep track of registered items not to overflow the limit and defer registering new jobs if needed, especially if you are used to operate with huge collections. For now, we don't provide current limit state and remaining items to sync. 
+Consider retrying requests failed due to rate limit and use exponential backoff to reduce request count.
+
+#### By requests
+
+##### Per single IP
+* Maximum of 1000 requests per 10 seconds
+
+#### By connections
+
+##### Per single IP
+* Maximum of 60 new connections per 3 seconds
+* Maximum of 30 active connections in total
+
+Consider connection reuse.
 
 ## Interacting with the Player
 
