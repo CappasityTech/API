@@ -94,7 +94,7 @@ curl -X POST --compressed \
   "https://api.cappasity.com/api/oembed/marketplace?url=https%3A%2F%2F3d.cappasity.com%2Fu%2Fcappasity%2F2724daa5-cb68-43f9-8d5a-36be7e06f88d" \
   -d '{
     "data": {
-      "type": "oembed",
+      "type": "embed",
       "attributes": {
         "width": 100,
         "height": 600
