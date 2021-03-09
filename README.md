@@ -375,10 +375,10 @@ function receiveMessage(event) {
 
 Frame render notification, will be dispatched each time a draw happens, including when a player is being rotated
 
-```js
+```json
 {
-  modelId: 'uuid-v4-of-the-model',
-  actionType: 'draw'
+  "modelId": "uuid-v4-of-the-model",
+  "actionType": "draw"
 }
 ```
 
@@ -387,10 +387,24 @@ Frame render notification, will be dispatched each time a draw happens, includin
 This happens when all segments of the 3d view had been downloaded. This is not a first paint - its a full
 load. To be able to track initial render and interactivity of the player - listen to frame draw notification
 
-```js
+```json
 {
-  modelId: 'uuid-v4-of-the-model',
-  actionType: 'loaded'
+  "modelId": "uuid-v4-of-the-model",
+  "actionType": "loaded"
+}
+```
+
+#### Player render errors
+
+All types of handled errors notify the parent frame with a message structured as follows:
+
+```json
+{
+  "source": "cappasity-player",
+  "actionType": "error",
+  "modelId": "uuid-v4-of-the-requested-model",
+  "message": "error details",
+  "code": xxx // numeric code of the error, e.g. 404
 }
 ```
 
