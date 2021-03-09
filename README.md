@@ -107,11 +107,10 @@ curl -X POST --compressed \
 HTTP response will have statusCode `200` and contain the following JSON data structure in the body:
 
 ```json
-{
   {
     "meta": {
       "id": "<request id>"
-    }
+    },
     "data": {
       "id": "<user id>/<model id>",
       "type": "embed",
@@ -120,7 +119,6 @@ HTTP response will have statusCode `200` and contain the following JSON data str
       }
     }
   }
-}
 ```
 
 #### Player customization options
@@ -399,13 +397,13 @@ load. To be able to track initial render and interactivity of the player - liste
 
 All types of handled errors notify the parent frame with a message structured as follows:
 
-```json
+```json5
 {
   "source": "cappasity-player",
   "actionType": "error",
   "modelId": "uuid-v4-of-the-requested-model",
   "message": "error details",
-  "code": xxx // numeric code of the error, e.g. 404
+  "code": 404 // numeric code of the error
 }
 ```
 
