@@ -15,6 +15,7 @@
   - [Types of events](#types-of-events)
     - [Frame Draw Notification](#frame-draw-notification)
     - [Full Model Load](#full-model-load)
+    - [Player render errors](#player-render-errors)
 - [Controlling Player behavior](#controlling-player-behavior)
   - [Available methods](#available-methods)
     - [`rotateToDeg`](#rotatetodeg)
