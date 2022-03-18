@@ -1,0 +1,157 @@
+{
+    "$id": "File",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "id",
+        "type",
+        "attributes"
+    ],
+    "properties": {
+        "type": {
+            "type": "string",
+            "const": "file"
+        },
+        "id": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+            "description": "Immutable Cappasity ID, created when upload is initiated and exists up until the point the model is deleted"
+        },
+        "attributes": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "human readable model name"
+                },
+                "alias": {
+                    "type": "string",
+                    "pattern": "^[0-9a-zA-Z\\-\\._]{1,50}$",
+                    "description": "Unique per account. Optional alias/SKU to be used for access to the model or it's preview/embeds instead of the cappasity id"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "optional free-text description for SEO purposes"
+                },
+                "website": {
+                    "type": "string",
+                    "description": "optional external link for the model"
+                },
+                "owner": {
+                    "type": "string",
+                    "description": "identificator of the model owner inside the cappasity system"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "current processing status of the model",
+                    "enum": [
+                        "pending",
+                        "uploaded",
+                        "processed",
+                        "processing",
+                        "failed"
+                    ]
+                },
+                "startedAt": {
+                    "type": "integer",
+                    "description": "time when upload started"
+                },
+                "uploadedAt": {
+                    "type": "integer",
+                    "description": "time when upload finished"
+                },
+                "public": {
+                    "type": "boolean",
+                    "description": "indicated whether model is public or not"
+                },
+                "parts": {
+                    "type": "integer",
+                    "description": "number of upload parts"
+                },
+                "files": {
+                    "type": "array",
+                    "description": "internal file data",
+                    "items": {
+                        "$ref": "#/definitions/file"
+                    }
+                },
+                "embed": {
+                    "type": "object",
+                    "description": "associated embed data"
+                },
+                "bucket": {
+                    "type": "string",
+                    "description": "storage bucket that is used"
+                },
+                "unlisted": {
+                    "type": "boolean",
+                    "description": "indicated direct-only access via link"
+                },
+                "tags": {
+                    "type": "array",
+                    "description": "search meta tags",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "contentLength": {
+                    "type": "integer"
+                },
+                "backgroundColor": {
+                    "type": "string",
+                    "pattern": "^(#(?:[\\dA-Fa-f]{3}){1,2}|rgb\\((?:\\d{1,3},\\s*){2}\\d{1,3}\\))$"
+                },
+                "backgroundImage": {
+                    "type": "string",
+                    "format": "uri"
+                }
+            }
+        },
+        "links": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "string",
+                "format": "uri"
+            }
+        }
+    },
+    "definitions": {
+        "file": {
+            "type": "object",
+            "properties": {
+                "filename": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "c-bin",
+                        "c-texture",
+                        "c-preview",
+                        "c-archive",
+                        "c-simple",
+                        "c-pack",
+                        "wrl",
+                        "obj",
+                        "stl",
+                        "background",
+                        "arbitrary"
+                    ]
+                },
+                "contentLength": {
+                    "type": "integer"
+                },
+                "contentType": {
+                    "type": "string"
+                },
+                "contentEncoding": {
+                    "type": "string"
+                },
+                "md5Hash": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
