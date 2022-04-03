@@ -1,6 +1,6 @@
 # Documentation for integrating with Cappasity 3D Platform
 
-(c) Copyright 2017-2021, Cappasity Inc. All rights reserved.
+(c) Copyright 2017-2022, Cappasity Inc. All rights reserved.
 
 - [Registering an account and getting an API key](#registering-an-account-and-getting-an-api-key)
 - [Uploading 3D View or 3D models](#uploading-3d-view-or-3d-models)
@@ -156,7 +156,7 @@ Use iframe code and insert it into your HTML
 
 ### List uploaded files
 
-This method allows to return list of uploaded files and paginate between them. For example, you can get a list of uploaded files between 2 points in time for your user.
+This method allows to return list of uploaded files and paginate between them. For example, you can get a list of uploaded files between 2 points in time for your user. Maximum interval - 30 days.
 Due to database architecture - list of returned models will be internally cached until one of 3 cases happen: last access to list was done
 more than 30 seconds ago, model was uploaded or model was deleted. In the future this can change.
 
