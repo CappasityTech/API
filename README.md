@@ -149,7 +149,7 @@ Accepted attributes are:
 | `storeurl`          | string  | ''      | Link to the store page                                                                    |
 | `hidehints`         | boolean | false   | Hide tutorial hints                                                                       |
 | `starthint`         | boolean | false   | Whether to skip 'rotate hint'                                                             |
-| `language`          | string  | ---     | The language used to display hints and messages, available languages are: `en`, `zh`, `ru`, `de`, `es`, `fr`, `nl`, `jp`, `ko`, `it` |
+| `language`          | string  | ---     | The language used to display hints and messages, available languages are: `en`, `zh`, `ru`, `de`, `es`, `fr`, `nl`, `jp`, `ko`, `it`, `tr` |
 | `arbutton`          | boolean | true    | Show AR button                                                                            |
 
 Use iframe code and insert it into your HTML
