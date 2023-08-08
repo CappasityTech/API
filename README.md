@@ -134,8 +134,8 @@ Accepted attributes are:
 | `logo`              | boolean | true    | Show Cappasity logo                                                                       |
 | `analytics`         | boolean | true    | Enable analytics                                                                          |
 | `autorotate`        | boolean | false   | Start automatic rotation                                                                  |
-| `autorotatetime`    | float   | 10      | Rotation time of the full turn, seconds                                                   |
-| `autorotatedelay`   | float   | 2       | Delay if rotation was interrupted, seconds                                                |
+| `autorotatetime`    | float   | --      | Rotation time of the full turn, seconds                                                   |
+| `autorotatedelay`   | float   | --      | Delay if rotation was interrupted, seconds                                                |
 | `autorotatedir`     | integer | 1       | Autorotate direction (clockwise is `1`, counter-clockwise is `-1`)                        |
 | `hidefullscreen`    | boolean | true    | Hide fullscreen view button                                                               |
 | `hideautorotateopt` | boolean | true    | Hide autorotate button                                                                    |
