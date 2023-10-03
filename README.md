@@ -460,6 +460,6 @@ If model in the player is zoomed this command will return it back to non-zoomed 
 ## Send Analytics
 Add the following script tag to the pages with Cappasity 3D Views:
 ```
-<script async src=”https://api.cappasity.com/api/player/cappasity-ai” />
+<script async src="https://api.cappasity.com/api/player/cappasity-ai" />
 ```
 It will collect and send Cappasity 3D View analytics.
