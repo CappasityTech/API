@@ -2,28 +2,41 @@
 
 (c) Copyright 2017-2023, Cappasity Inc. All rights reserved.
 
-- [Registering an account and getting an API key](#registering-an-account-and-getting-an-api-key)
-- [Uploading 3D View or 3D models](#uploading-3d-view-or-3d-models)
-- [API methods and considerations](#api-methods-and-considerations)
-  - [Get embed code based on SKU](#get-embed-code-based-on-sku)
-  - [Get embed code based on cappasity URL](#get-embed-code-based-on-cappasity-url)
-    - [Player customization options](#player-customization-options)
-  - [List uploaded files](#list-uploaded-files)
-  - [Get information about specific model by SKU or Cappasity ID](#get-information-about-specific-model-by-sku-or-cappasity-id)
-  - [Getting preview image for the model](#getting-preview-image-for-the-model)
-- [Interacting with the Player](#interacting-with-the-player)
-  - [Types of events](#types-of-events)
-    - [Frame Draw Notification](#frame-draw-notification)
-    - [Full Model Load](#full-model-load)
-    - [Player render errors](#player-render-errors)
-- [Controlling Player behavior](#controlling-player-behavior)
-  - [Available methods](#available-methods)
-    - [`rotateToDeg`](#rotatetodeg)
-    - [`enterFullscreen`](#enterfullscreen)
-    - [`cancelFullscreen`](#cancelfullscreen)
-    - [`cancelZoom`](#cancelzoom)
-- [Send Analytics](#send-analytics)
-- [Rate Limits](#rate-limits)
+- [Documentation for integrating with Cappasity 3D Platform](#documentation-for-integrating-with-cappasity-3d-platform)
+  - [Registering an account and getting an API key](#registering-an-account-and-getting-an-api-key)
+  - [Uploading 3D View or 3D models](#uploading-3d-view-or-3d-models)
+  - [API methods and considerations](#api-methods-and-considerations)
+    - [Get embed code based on SKU](#get-embed-code-based-on-sku)
+    - [Get embed code based on Cappasity URL](#get-embed-code-based-on-cappasity-url)
+      - [Player customization options](#player-customization-options)
+    - [List uploaded files](#list-uploaded-files)
+      - [Params](#params)
+      - [Filtering](#filtering)
+      - [Pagination](#pagination)
+        - [Limit-filter based pagination](#limit-filter-based-pagination)
+        - [Limit-offset based pagination](#limit-offset-based-pagination)
+    - [Get information about specific model by SKU or Cappasity ID](#get-information-about-specific-model-by-sku-or-cappasity-id)
+    - [Getting preview image for the model](#getting-preview-image-for-the-model)
+    - [Rate Limits](#rate-limits)
+      - [By sync items to register](#by-sync-items-to-register)
+        - [Per job](#per-job)
+        - [Per all jobs for last 24 hours](#per-all-jobs-for-last-24-hours)
+      - [By requests](#by-requests)
+        - [Per single IP](#per-single-ip)
+      - [By connections](#by-connections)
+        - [Per single IP](#per-single-ip-1)
+  - [Interacting with the Player](#interacting-with-the-player)
+    - [Types of events](#types-of-events)
+      - [Frame Draw Notification](#frame-draw-notification)
+      - [Full Model Load](#full-model-load)
+      - [Player render errors](#player-render-errors)
+  - [Controlling Player behavior](#controlling-player-behavior)
+    - [Available methods](#available-methods)
+      - [`rotateToDeg`](#rotatetodeg)
+      - [`enterFullscreen`](#enterfullscreen)
+      - [`cancelFullscreen`](#cancelfullscreen)
+      - [`cancelZoom`](#cancelzoom)
+  - [Send Analytics](#send-analytics)
 
 ## Registering an account and getting an API key
 
@@ -156,11 +169,12 @@ Use iframe code and insert it into your HTML
 
 ### List uploaded files
 
-This method allows to return list of uploaded files and paginate between them. For example, you can get a list of uploaded files between 2 points in time for your user. Maximum interval - 30 days.
-Due to database architecture - list of returned models will be internally cached until one of 3 cases happen: last access to list was done
-more than 30 seconds ago, model was uploaded or model was deleted. In the future this can change.
+This method lists uploaded files and paginates across them. 
 
-Below is description of accepted params:
+Filtering files by upload date range is available with maximum interval of 30 days.
+Due to database architecture the list of returned models is internally cached until one of 3 cases happens: the list is accessed more than 30 seconds ago, a file is uploaded or deleted. In the future the cache invalidation logic can change.
+
+#### Params
 
 | Property Type | Property Name   | Default  | Allowed Values   | Example                         | Comments                                                                          |
 |---------------|-----------------|----------|------------------|---------------------------------|-------------------------------------------------------------------------------|
@@ -179,7 +193,8 @@ Below is description of accepted params:
 | Query         | embedParams     |   %7B%7D |                  | `?embedParams=%7B%7D`           | Specify override values for embed.code template | 
 
 
-Most important of all params is filter. To create it use the following function:
+#### Filtering
+To generate `filter` value use the following function:
 
 ```js
 function encodeFilter(obj) {
@@ -205,6 +220,41 @@ curl -X GET --compressed \
   -H "Authorization: Bearer hash.token.signature" \
   "https://api.cappasity.com/api/files?owner=cappasity&sortBy=uploadedAt&order=DESC&shallow=1&offset=0&limit=24&filter=%7B%22uploadedAt%22%3A%7B%22gte%22%3A1486694997327%2C%22lte%22%3A1487447115708%7D%7D"
 ```
+
+#### Pagination
+There are two types of pagination.
+- limit-filter based pagination - Strongly recommended as the fastest way to paginate entire collection that has over 100 items, required over 500 items
+- limit-offset based pagination - Least preferred to paginate huge collections, use for backward compatibility solution or to iterate with custom `filter` and `sort` params
+
+##### Limit-filter based pagination
+Uses `limit`, `criteria` and `filter` query params:
++ `limit` - Limit models per page
++ `criteria` - Sort by `uploadedAt`
++ `filter.uploadedAt.gte` or `filter.uploadedAt.lte` - Filter by `uploadedAt` field that stores a timestamp in milliseconds. See how to encode filter param in the [filtering](#filtering) section.
+
+Example:
+1. To retrieve first page use only `limit` and `criteria` query params:
+```curl
+curl -X GET --compressed \
+  -H 'Authorization: Bearer xxx.xxx.xxx' \
+  "https://api.cappasity.com/api/files?limit=20&criteria=uploadedAt"
+```
+2. To retrieve the next page, find the max/min value of `uploadedAt` field among the first page results, depending on sorting direction. Keep in mind that by default, the list is sorted in a `DESC` order.
+Let's say the minimum `uploadedAt` value is `1633430297215`. Encode the filter param: 
+```js
+encodeURIComponent(JSON.stringify({ uploadedAt: { lte: 1633430297215 } }));
+// '%7B%22uploadedAt%22%3A%7B%22lte%22%3A1633430297215%7D%7D'
+```
+
+3. Request next page:
+```curl
+curl -X GET --compressed \
+  -H 'Authorization: Bearer xxx.xxx.xxx' \
+  "https://api.cappasity.com/api/files?limit=20&criteria=uploadedAt&filter=%7B%22uploadedAt%22%3A%7B%22lte%22%3A1633430297215%7D%7D"
+```
+
+##### Limit-offset based pagination
+Use standard `limit` and `offset` query params.
 
 ### Get information about specific model by SKU or Cappasity ID
 
