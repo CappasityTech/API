@@ -8,7 +8,7 @@
   - [Get embed code based on SKU](#get-embed-code-based-on-sku)
   - [Get embed code based on cappasity URL](#get-embed-code-based-on-cappasity-url)
     - [Player customization options](#player-customization-options)
-  - [List uploaded files](#list-uploaded-files)
+  - [List uploaded models](#list-uploaded-models)
     - [Params](#params)
     - [Filtering](#filtering)
     - [Pagination](#pagination)
@@ -159,30 +159,30 @@ Accepted attributes are:
 
 Use iframe code and insert it into your HTML
 
-### List uploaded files
+### List uploaded models
 
-This method lists uploaded files and paginates across them. 
+This method lists uploaded models and paginates across them. 
 
-Filtering files by upload date range is available with maximum interval of 30 days.
-Due to database architecture the list of returned models is internally cached until one of 3 cases happens: the list is accessed more than 30 seconds ago, a file is uploaded or deleted. In the future the cache invalidation logic can change.
+Filtering models by upload date range is available with maximum interval of 30 days.
+Due to database architecture the list of returned models is internally cached until one of 3 cases happens: the list is accessed more than 30 seconds ago, a model is uploaded or deleted. In the future the cache invalidation logic can change.
 
 #### Params
 
 | Property Type | Property Name   | Default  | Allowed Values   | Example                         | Comments                                                                          |
 |---------------|-----------------|----------|------------------|---------------------------------|-------------------------------------------------------------------------------|
-| Header        | Authorization   |          |                  | `Authorization: Bearer <token>` | If not specified - will only return public files |
-| Header        | Accept-Encoding |          |                  | `Accept-Encoding: gzip`         | If not specified - will return plain text, please use it |
-| Header        | Accept-Version  |          |                  | `Accept-Version: ~1`            | If not specified - will use most-recent version on breaking changes, please pin API |
-| Query         | pub             |          |             0, 1 | `?pub=0`                        | If authorization header is set & pub=0 - includes private models |
-| Query         | order           |      ASC |        ASC, DESC | `?order=DESC`                   | Defaults to ascending |
-| Query         | offset          |        0 |     0 < offset   | `?offset=24`                    | Used for paginating |
-| Query         | limit           |       12 | 0 < limit <= 100 | `?limit=24`                     | Models per page |
-| Query         | filter          | `%7B%7D` |                  | `?filter=%7B%7D`                | Used to filter response |
-| Query         | criteria        |       id |                  | `?criteria=uploadedAt`          | Sorts by this field |
-| Query         | shallow         |        0 |                  | `?shallow=1`                    | Please set to 1 to reduce traffic. It omits information about uploaded files |
-| Query         | owner           |          |                  | `?owner=cappasity`              | For public - can select any customer alias, for private - must supply auth token |
-| Query         | embed           |        0 |             0, 1 | `?embed=1`                      | Will render embed.code into embed.html param |
-| Query         | embedParams     |   %7B%7D |                  | `?embedParams=%7B%7D`           | Specify override values for embed.code template | 
+| Header        | Authorization   |          |                   | `Authorization: Bearer <token>` | If not specified - will only return public models |
+| Header        | Accept-Encoding |          |                   | `Accept-Encoding: gzip`         | If not specified - will return plain text, please use it |
+| Header        | Accept-Version  |          |                   | `Accept-Version: ~1`            | If not specified - will use most-recent version on breaking changes, please pin API |
+| Query         | pub             |          |             0, 1  | `?pub=0`                        | If authorization header is set & pub=0 - includes private models |
+| Query         | order           |      ASC |        ASC, DESC  | `?order=DESC`                   | Defaults to ascending |
+| Query         | offset          |        0 | 0 < offset < 1000 | `?offset=24`                    | Used for paginating |
+| Query         | limit           |       12 | 0 < limit <= 100  | `?limit=24`                     | Models per page |
+| Query         | filter          | `%7B%7D` |                   | `?filter=%7B%7D`                | Used to filter response |
+| Query         | criteria        |       id |                   | `?criteria=uploadedAt`          | Sorts by this field |
+| Query         | shallow         |        0 |                   | `?shallow=1`                    | Please set to 1 to reduce traffic. It omits information about uploaded models |
+| Query         | owner           |          |                   | `?owner=cappasity`              | For public - can select any customer alias, for private - must supply auth token |
+| Query         | embed           |        0 |             0, 1  | `?embed=1`                      | Will render embed.code into embed.html param |
+| Query         | embedParams     |   %7B%7D |                   | `?embedParams=%7B%7D`           | Specify override values for embed.code template | 
 
 
 #### Filtering
@@ -214,11 +214,15 @@ curl -X GET --compressed \
 ```
 
 #### Pagination
-There are two types of pagination.
-- limit-filter based pagination - Strongly recommended as the fastest way to paginate entire collection that has over 100 items, required over 500 items
-- limit-offset based pagination - Least preferred to paginate huge collections, use for backward compatibility solution or to iterate with custom `filter` and `sort` params
+There are two types of pagination:
+- [limit-filter based pagination](#limit-filter-based-pagination) - Strongly recommended as the fastest way to paginate catalog over 100 items, and the only way to paginate catalog over 500 items
+- [limit-offset based pagination](#limit-offset-based-pagination) - Paginate small catalogs under 100 items, use for backward compatibility solution or to paginate with custom `filter` and `sort` params
 
 ##### Limit-filter based pagination
+| Good when you need to                       | Bad when you need to                  |
+|---------------------------------------------|---------------------------------------|
+| Paginate catalog over 100 items  | Use custom `filter` and `sort` params - use [limit-offset based pagination](#limit-offset-based-pagination) |
+
 Uses `limit`, `criteria` and `filter` query params:
 + `limit` - Limit models per page
 + `criteria` - Sort by `uploadedAt`
@@ -246,6 +250,11 @@ curl -X GET --compressed \
 ```
 
 ##### Limit-offset based pagination
+| Good when you need to                       | Bad when you need to                  |
+|---------------------------------------------|---------------------------------------|
+| Paginate small catalog under 100 items. Up to 500 is okay, but it becomes slow.  | Paginate catalog over 500 items -  use [limit-filter based pagination](#limit-filter-based-pagination). Maximum allowed offset is 1000. |
+| Use custom `filter` and `sort` params |  |
+
 Use standard `limit` and `offset` query params.
 
 ### Get information about specific model by SKU or Cappasity ID
