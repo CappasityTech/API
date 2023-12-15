@@ -175,7 +175,7 @@ Due to database architecture the list of returned models is internally cached un
 | Header        | Accept-Version  |          |                   | `Accept-Version: ~1`            | If not specified - will use most-recent version on breaking changes, please pin API |
 | Query         | pub             |          |             0, 1  | `?pub=0`                        | If authorization header is set & pub=0 - includes private models |
 | Query         | order           |      ASC |        ASC, DESC  | `?order=DESC`                   | Defaults to ascending |
-| Query         | offset          |        0 | 0 < offset < 1000 | `?offset=24`                    | Used for paginating |
+| Query         | offset          |        0 | 0 < offset <= 1000 | `?offset=24`                    | Used for paginating |
 | Query         | limit           |       12 | 0 < limit <= 100  | `?limit=24`                     | Models per page |
 | Query         | filter          | `%7B%7D` |                   | `?filter=%7B%7D`                | Used to filter response |
 | Query         | criteria        |       id |                   | `?criteria=uploadedAt`          | Sorts by this field |
