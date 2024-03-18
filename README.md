@@ -168,21 +168,21 @@ Due to database architecture the list of returned models is internally cached un
 
 #### Params
 
-| Property Type | Property Name   | Default  | Allowed Values   | Example                         | Comments                                                                          |
-|---------------|-----------------|----------|------------------|---------------------------------|-------------------------------------------------------------------------------|
-| Header        | Authorization   |          |                   | `Authorization: Bearer <token>` | If not specified - will only return public models |
-| Header        | Accept-Encoding |          |                   | `Accept-Encoding: gzip`         | If not specified - will return plain text, please use it |
-| Header        | Accept-Version  |          |                   | `Accept-Version: ~1`            | If not specified - will use most-recent version on breaking changes, please pin API |
-| Query         | pub             |          |             0, 1  | `?pub=0`                        | If authorization header is set & pub=0 - includes private models |
-| Query         | order           |      ASC |        ASC, DESC  | `?order=DESC`                   | Defaults to ascending |
+| Property Type | Property Name   | Default  | Allowed Values     | Example                         | Comments                                                                          |
+|---------------|-----------------|----------|--------------------|---------------------------------|-------------------------------------------------------------------------------|
+| Header        | Authorization   |          |                    | `Authorization: Bearer <token>` | If not specified - will only return public models |
+| Header        | Accept-Encoding |          |                    | `Accept-Encoding: gzip`         | If not specified - will return plain text, please use it |
+| Header        | Accept-Version  |          |                    | `Accept-Version: ~1`            | If not specified - will use most-recent version on breaking changes, please pin API |
+| Query         | pub             |          |             0, 1   | `?pub=0`                        | If authorization header is set & pub=0 - includes private models |
+| Query         | order           |      ASC |        ASC, DESC   | `?order=DESC`                   | Defaults to ascending |
 | Query         | offset          |        0 | 0 < offset <= 1000 | `?offset=24`                    | Used for paginating |
-| Query         | limit           |       12 | 0 < limit <= 100  | `?limit=24`                     | Models per page |
-| Query         | filter          | `%7B%7D` |                   | `?filter=%7B%7D`                | Used to filter response |
-| Query         | criteria        |       id |                   | `?criteria=uploadedAt`          | Sorts by this field |
-| Query         | shallow         |        0 |                   | `?shallow=1`                    | Please set to 1 to reduce traffic. It omits information about uploaded models |
-| Query         | owner           |          |                   | `?owner=cappasity`              | For public - can select any customer alias, for private - must supply auth token |
-| Query         | embed           |        0 |             0, 1  | `?embed=1`                      | Will render embed.code into embed.html param |
-| Query         | embedParams     |   %7B%7D |                   | `?embedParams=%7B%7D`           | Specify override values for embed.code template | 
+| Query         | limit           |       12 | 0 < limit <= 100   | `?limit=24`                     | Models per page |
+| Query         | filter          | `%7B%7D` |                    | `?filter=%7B%7D`                | Used to filter response |
+| Query         | criteria        |       id |                    | `?criteria=uploadedAt`          | Sorts by this field |
+| Query         | shallow         |        0 |                    | `?shallow=1`                    | Please set to 1 to reduce traffic. It omits information about uploaded models |
+| Query         | owner           |          |                    | `?owner=cappasity`              | For public - can select any customer alias, for private - must supply auth token |
+| Query         | embed           |        0 |             0, 1   | `?embed=1`                      | Will render embed.code into embed.html param |
+| Query         | embedParams     |   %7B%7D |                    | `?embedParams=%7B%7D`           | Specify override values for embed.code template | 
 
 
 #### Filtering
@@ -226,7 +226,7 @@ There are two types of pagination:
 Uses `limit`, `criteria` and `filter` query params:
 + `limit` - Limit models per page
 + `criteria` - Sort by `uploadedAt`
-+ `filter.uploadedAt.gte` or `filter.uploadedAt.lte` - Filter by `uploadedAt` field that stores a timestamp in milliseconds. See how to encode filter param in the [filtering](#filtering) section.
++ `filter.uploadedAt.gt` or `filter.uploadedAt.lt` - Filter by `uploadedAt` field that stores a timestamp in milliseconds. See how to encode filter param in the [filtering](#filtering) section.
 
 Example:
 1. To retrieve first page use only `limit` and `criteria` query params:
@@ -238,15 +238,15 @@ curl -X GET --compressed \
 2. To retrieve the next page, find the max/min value of `uploadedAt` field among the first page results, depending on sorting direction. Keep in mind that by default, the list is sorted in a `DESC` order.
 Let's say the minimum `uploadedAt` value is `1633430297215`. Encode the filter param: 
 ```js
-encodeURIComponent(JSON.stringify({ uploadedAt: { lte: 1633430297215 } }));
-// '%7B%22uploadedAt%22%3A%7B%22lte%22%3A1633430297215%7D%7D'
+encodeURIComponent(JSON.stringify({ uploadedAt: { lt: 1633430297215 } }));
+// '%7B%22uploadedAt%22%3A%7B%22lt%22%3A1633430297215%7D%7D'
 ```
 
 3. Request next page:
 ```curl
 curl -X GET --compressed \
   -H 'Authorization: Bearer xxx.xxx.xxx' \
-  "https://api.cappasity.com/api/files?limit=20&criteria=uploadedAt&filter=%7B%22uploadedAt%22%3A%7B%22lte%22%3A1633430297215%7D%7D"
+  "https://api.cappasity.com/api/files?limit=20&criteria=uploadedAt&filter=%7B%22uploadedAt%22%3A%7B%22lt%22%3A1633430297215%7D%7D"
 ```
 
 ##### Limit-offset based pagination
