@@ -178,7 +178,7 @@ Due to database architecture the list of returned models is internally cached un
 | Query         | offset          |        0 | 0 < offset <= 1000 | `?offset=24`                    | Used for paginating |
 | Query         | limit           |       12 | 0 < limit <= 100   | `?limit=24`                     | Models per page |
 | Query         | filter          | `%7B%7D` |                    | `?filter=%7B%7D`                | Used to filter response |
-| Query         | criteria        |       id |                    | `?criteria=uploadedAt`          | Sorts by this field |
+| Query         | sortBy          |       id |                    | `?sortBy=uploadedAt`            | Sorts by this field |
 | Query         | shallow         |        0 |                    | `?shallow=1`                    | Please set to 1 to reduce traffic. It omits information about uploaded models |
 | Query         | owner           |          |                    | `?owner=cappasity`              | For public - can select any customer alias, for private - must supply auth token |
 | Query         | embed           |        0 |             0, 1   | `?embed=1`                      | Will render embed.code into embed.html param |
@@ -186,31 +186,113 @@ Due to database architecture the list of returned models is internally cached un
 
 
 #### Filtering
+##### Building filter
+Let's say you want to filter `isInShowroom` models uploaded before specific time and match some search query.
+
+**1. Build a filter object**
+
+```js
+const filter = {
+  isInShowroom: 'true',
+  uploadedAt: {
+    lt: 1525282016276,
+  },
+  '#multi': {
+    fields: ['name','alias','description'],
+    match: 'coat'
+  }
+}
+```
+
+**2. Encode filter**
+
+To pass it as a query parameter, serialize filter object as JSON and URI encode the value.
+
+**JS Example**
+
 To generate `filter` value use the following function:
 
 ```js
 function encodeFilter(obj) {
   return encodeURIComponent(JSON.stringify(obj));
 }
+
+console.log(encodeFilter(filter));
+// '%7B%22isInShowroom%22%3A%22true%22%2C%22uploadedAt%22%3A%7B%22lt%22%3A1525282016276%7D%2C%22%23multi%22%3A%7B%22fields%22%3A%5B%22name%22%2C%22alias%22%2C%22description%22%5D%2C%22match%22%3A%22coat%22%7D%7D'
 ```
 
-Example:
-
-```js
-const filter = encodeFilter({
-  uploadedAt: {
-    gte: 1486694997327, // miliseconds
-    lte: 1487447115708, // miliseconds
-  },
-});
-```
+**3. Use encoded value as a query param**
 
 Example request:
 
 ```bash
 curl -X GET --compressed \
   -H "Authorization: Bearer hash.token.signature" \
-  "https://api.cappasity.com/api/files?owner=cappasity&sortBy=uploadedAt&order=DESC&shallow=1&offset=0&limit=24&filter=%7B%22uploadedAt%22%3A%7B%22gte%22%3A1486694997327%2C%22lte%22%3A1487447115708%7D%7D"
+  "https://api.cappasity.com/api/files?owner=cappasity&sortBy=uploadedAt&order=DESC&shallow=1&%7B%22isInShowroom%22%3A%22true%22%2C%22uploadedAt%22%3A%7B%22lt%22%3A1525282016276%7D%2C%22%23multi%22%3A%7B%22fields%22%3A%5B%22name%22%2C%22alias%22%2C%22description%22%5D%2C%22match%22%3A%22coat%22%7D%7D"
+```
+
+##### Complex filter examples
+
+**List account models with limit filter based pagination**
+
+See more about [limit-filter based pagination](#limit-filter-based-pagination)
+```js
+const filter = {
+  uploadedAt: {
+    lt: 1525282016276, // this timestamp works like a cursor
+  }
+};
+console.log(encodeFilter(filter));
+// %7B%22uploadedAt%22%3A%7B%22lt%22%3A1525282016276%7D%7D
+```
+
+**List account models added to showroom with limit filter based pagination**
+
+See more about [limit-filter based pagination](#limit-filter-based-pagination)
+```js
+const filter = {
+  isInShowroom: 'true', // notice: 'true' is a string here
+  uploadedAt: {
+    lt: 1525282016276, // this timestamp works like a cursor
+  }
+}
+console.log(encodeFilter(filter));
+// %7B%22isInShowroom%22%3A%22true%22%2C%22uploadedAt%22%3A%7B%22lt%22%3A1525282016276%7D%7D
+```
+
+**Search models by name, alias and description with limit-filter based pagination**
+
+```js
+const filter = {
+  uploadedAt: {
+    lt: 1525282016276, // this timestamp works like a cursor
+  },
+  '#multi': {
+    fields: ['name','alias','description'],
+    match: 'coat'
+  }
+}
+
+console.log(encodeFilter(filter)); 
+
+// %7B%22uploadedAt%22%3A%7B%22lt%22%3A1525282016276%7D%2C%22%23multi%22%3A%7B%22fields%22%3A%5B%22name%22%2C%22alias%22%2C%22description%22%5D%2C%22match%22%3A%22coat%22%7D%7D
+```
+
+**Search models that are added to showroom by name, alias and description with limit-filter based pagination**
+
+```js
+const filter = {
+  uploadedAt: {
+    lt: 1525282016276, // this timestamp works like a cursor
+  },
+  isInShowroom: 'true', // notice: 'true' is a string here
+  '#multi': {
+    fields: ['name','alias','description'],
+    match: 'coat'
+  }
+}
+console.log(encodeFilter(filter));
+// %7B%22uploadedAt%22%3A%7B%22lt%22%3A1525282016276%7D%2C%22isInShowroom%22%3A%22true%22%2C%22%23multi%22%3A%7B%22fields%22%3A%5B%22name%22%2C%22alias%22%2C%22description%22%5D%2C%22match%22%3A%22coat%22%7D%7D
 ```
 
 #### Pagination
@@ -223,17 +305,17 @@ There are two types of pagination:
 |---------------------------------------------|---------------------------------------|
 | Paginate catalog over 100 items  | Use custom `filter` and `sort` params - use [limit-offset based pagination](#limit-offset-based-pagination) |
 
-Uses `limit`, `criteria` and `filter` query params:
+Uses `limit`, `sortBy` and `filter` query params:
 + `limit` - Limit models per page
-+ `criteria` - Sort by `uploadedAt`
++ `sortBy` - Sort by `uploadedAt`
 + `filter.uploadedAt.gt` or `filter.uploadedAt.lt` - Filter by `uploadedAt` field that stores a timestamp in milliseconds. See how to encode filter param in the [filtering](#filtering) section.
 
 Example:
-1. To retrieve first page use only `limit` and `criteria` query params:
+1. To retrieve first page use only `limit` and `sortBy` query params:
 ```curl
 curl -X GET --compressed \
   -H 'Authorization: Bearer xxx.xxx.xxx' \
-  "https://api.cappasity.com/api/files?limit=20&criteria=uploadedAt"
+  "https://api.cappasity.com/api/files?limit=20&sortBy=uploadedAt"
 ```
 2. To retrieve the next page, find the max/min value of `uploadedAt` field among the first page results, depending on sorting direction. Keep in mind that by default, the list is sorted in a `DESC` order.
 Let's say the minimum `uploadedAt` value is `1633430297215`. Encode the filter param: 
@@ -246,7 +328,7 @@ encodeURIComponent(JSON.stringify({ uploadedAt: { lt: 1633430297215 } }));
 ```curl
 curl -X GET --compressed \
   -H 'Authorization: Bearer xxx.xxx.xxx' \
-  "https://api.cappasity.com/api/files?limit=20&criteria=uploadedAt&filter=%7B%22uploadedAt%22%3A%7B%22lt%22%3A1633430297215%7D%7D"
+  "https://api.cappasity.com/api/files?limit=20&sortBy=uploadedAt&filter=%7B%22uploadedAt%22%3A%7B%22lt%22%3A1633430297215%7D%7D"
 ```
 
 ##### Limit-offset based pagination
