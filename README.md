@@ -1,6 +1,6 @@
 # Documentation for integrating with Cappasity 3D Platform
 
-(c) Copyright 2017-2023, Cappasity Inc. All rights reserved.
+(c) Copyright 2017-2024, Cappasity Inc. All rights reserved.
 
 - [Registering an account and getting an API key](#registering-an-account-and-getting-an-api-key)
 - [Uploading 3D View or 3D models](#uploading-3d-view-or-3d-models)
